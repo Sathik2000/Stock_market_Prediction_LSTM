@@ -1,50 +1,50 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[287]:
+# In[3]:
 
 
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
-# In[288]:
+# In[4]:
 
 
 df1=pd.read_csv('MSFT.csv')
 
 
-# In[289]:
+# In[5]:
 
 
 df1.head(5)
 
 
-# In[290]:
+# In[6]:
 
 
 df1.shape
 
 
-# In[291]:
+# In[7]:
 
 
 df1.isnull().sum()
 
 
-# In[292]:
+# In[8]:
 
 
 df2=df1.reset_index()['High']
 
 
-# In[293]:
+# In[9]:
 
 
 df3=df1.reset_index()['Close']
 
 
-# In[294]:
+# In[10]:
 
 
 #High
@@ -52,7 +52,7 @@ df2.plot()
 plt.grid()
 
 
-# In[295]:
+# In[11]:
 
 
 #Close
@@ -60,7 +60,7 @@ df3.plot()
 plt.grid()
 
 
-# In[296]:
+# In[12]:
 
 
 plt.plot(df1.Open,label='Open')
@@ -70,7 +70,7 @@ plt.grid()
 plt.show()
 
 
-# In[297]:
+# In[13]:
 
 
 plt.plot(df1.High,label='High')
@@ -80,13 +80,13 @@ plt.grid()
 plt.show()
 
 
-# In[298]:
+# In[14]:
 
 
 df1
 
 
-# In[299]:
+# In[15]:
 
 
 import pandas as pd
@@ -105,14 +105,14 @@ plt.grid()
 plt.show()  # To display the plot
 
 
-# In[300]:
+# In[16]:
 
 
 # Before scalling
 df3
 
 
-# In[301]:
+# In[17]:
 
 
 import numpy as np
@@ -121,13 +121,13 @@ scaler=MinMaxScaler(feature_range=(0,1))
 df3=scaler.fit_transform(np.array(df3).reshape(-1,1))
 
 
-# In[302]:
+# In[18]:
 
 
 df3
 
 
-# In[303]:
+# In[19]:
 
 
 # splitting Data into traintest split
@@ -136,7 +136,7 @@ test_size=len(df3)-training_size
 train_data,test_data=df3[0:training_size,:],df3[training_size:len(df3),:1]
 
 
-# In[304]:
+# In[20]:
 
 
 print('training_size:\n',training_size)
@@ -145,7 +145,7 @@ print('train_data\n',train_data)
 print('test_data\n',test_data)
 
 
-# In[305]:
+# In[21]:
 
 
 import numpy
@@ -159,7 +159,7 @@ def create_dataset(dataset, time_step=1):
 	return numpy.array(dataX), numpy.array(dataY)
 
 
-# In[355]:
+# In[22]:
 
 
 # reshape into X=t,t+1,t+2,t+3 and Y=t+4
@@ -168,19 +168,19 @@ X_train, y_train = create_dataset(train_data, time_step)
 X_test, ytest = create_dataset(test_data, time_step)
 
 
-# In[356]:
+# In[23]:
 
 
 print(X_train.shape), print(y_train.shape)
 
 
-# In[357]:
+# In[24]:
 
 
 print(X_test.shape), print(ytest.shape)
 
 
-# In[358]:
+# In[25]:
 
 
 # reshape input to be [samples, time steps, features] which is required for LSTM
@@ -188,7 +188,7 @@ X_train =X_train.reshape(X_train.shape[0],X_train.shape[1] , 1)
 X_test = X_test.reshape(X_test.shape[0],X_test.shape[1] , 1)
 
 
-# In[359]:
+# In[26]:
 
 
 ### Create the Stacked LSTM model
@@ -197,30 +197,30 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import LSTM
 
 
-# In[360]:
+# In[27]:
 
 
 model=Sequential()
-model.add(LSTM(10,return_sequences=True,input_shape=(20,1)))
-model.add(LSTM(10,return_sequences=True))
-model.add(LSTM(10))
+model.add(LSTM(50,return_sequences=True,input_shape=(20,1)))
+model.add(LSTM(50,return_sequences=True))
+model.add(LSTM(50))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error',optimizer='adam')
 
 
-# In[361]:
+# In[28]:
 
 
 model.summary()
 
 
-# In[363]:
+# In[54]:
 
 
-model.fit(X_train,y_train,validation_data=(X_test,ytest),epochs=100,batch_size=10,verbose=1)
+model.fit(X_train,y_train,validation_data=(X_test,ytest),epochs=100,batch_size=25,verbose=1)
 
 
-# In[364]:
+# In[55]:
 
 
 import tensorflow as tf
@@ -229,7 +229,7 @@ train_predict=model.predict(X_train)
 test_predict=model.predict(X_test)
 
 
-# In[365]:
+# In[56]:
 
 
 ##Transformback to original form
@@ -237,7 +237,7 @@ train_predict=scaler.inverse_transform(train_predict)
 test_predict=scaler.inverse_transform(test_predict)
 
 
-# In[366]:
+# In[57]:
 
 
 ### Calculate RMSE performance metrics
@@ -246,14 +246,14 @@ from sklearn.metrics import mean_squared_error
 math.sqrt(mean_squared_error(y_train,train_predict))
 
 
-# In[367]:
+# In[58]:
 
 
 ### Test Data RMSE
 math.sqrt(mean_squared_error(ytest,test_predict))
 
 
-# In[369]:
+# In[59]:
 
 
 ### Plotting 
@@ -274,35 +274,36 @@ plt.legend()
 plt.show()
 
 
-# In[370]:
+# In[60]:
 
 
 len(test_data)
 
 
-# In[371]:
+# In[61]:
 
 
 x_input=test_data[68:].reshape(1,-1)
 x_input.shape
 
 
-# In[372]:
+# In[62]:
 
 
 temp_input=list(x_input)
 temp_input=temp_input[0].tolist()
 
 
-# In[373]:
+# In[63]:
 
 
 temp_input
 
 
-# In[374]:
+# In[69]:
 
 
+lst_output=[]
 n_steps=20
 i=0
 while(i<30):
@@ -334,20 +335,28 @@ while(i<30):
 print(lst_output)
 
 
-# In[375]:
+# In[ ]:
+
+
+# Future 30 days Result
+plt.plot(day_new,scaler.inverse_transform(df3[230:]))
+plt.plot(day_pred,scaler.inverse_transform(lst_output))
+
+
+# In[70]:
 
 
 day_new=np.arange(1,21)
 day_pred=np.arange(21,51)
 
 
-# In[376]:
+# In[71]:
 
 
 len(df3)
 
 
-# In[377]:
+# In[72]:
 
 
 # Assuming you have defined df3 and lst_output previously
@@ -361,7 +370,7 @@ plt.plot(combined_array[100:])
 plt.show()
 
 
-# In[378]:
+# In[73]:
 
 
 df4=scaler.inverse_transform(df4).tolist()
